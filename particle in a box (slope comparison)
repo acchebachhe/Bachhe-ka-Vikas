@@ -1,0 +1,36 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def solve_schrodinger(E, slope, x):
+    psi, phi = 0.0, slope  
+    psi_values = [psi]
+    h = x[1] - x[0]
+    for i in range(len(x)-1):
+        psi = psi + h * phi
+        phi = phi + h * (-2 * E * psi)  
+        psi_values.append(psi)
+    return np.array(psi_values)
+x = np.linspace(0, 1, 100)
+slope = float(input("Enter slope value: "))
+plt.figure(figsize=(10, 8))
+
+for n in [1, 2, 3]:
+    plt.subplot(3, 1, n)
+    E_true = (n**2 * np.pi**2) / 2
+    slopes = [slope * 0.5, slope, slope * 1.5, slope * 2.0]
+    colors = ['red', 'blue', 'green', 'orange']
+    for i, s in enumerate(slopes):
+        psi = solve_schrodinger(E_true, s, x)
+        plt.plot(x, psi, color=colors[i], label=f'slope={s:.1f}')
+        plt.scatter(1, psi[-1], color=colors[i], s=50)
+
+    psi_exact = np.sqrt(2) * np.sin(n * np.pi * x)
+    plt.plot(x, psi_exact, 'k--', label='Exact')
+    plt.title(f'n={n}, E={E_true:.2f}')
+    plt.ylabel('ψ(x)')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+
+plt.xlabel('x')
+plt.tight_layout()
+plt.show()
